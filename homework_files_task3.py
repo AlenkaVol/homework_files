@@ -1,35 +1,45 @@
 # задание 3
 
-# функция для подсчета количества строк в файле
-def count_lines(file):
-    quantity_lines = 0
-    with open(file, 'r', encoding='UTF-8') as f:
-        quantity_lines = len(f.readlines())
-    return quantity_lines
+import os
 
 
-# print(count_lines('1.txt'))
-# print(count_lines('2.txt'))
-# print(count_lines('3.txt'))
+def write_file(directory_name):
+    # создаем список с именами файлов необходимого формата
+    list_of_files = []
+    for name_file in os.listdir(directory_name):
+        if '.txt' in name_file:
+            list_of_files.append(name_file)
 
-# функция для записи данных в итоговый файл
-def write_file(file_write, file_read):
-    file_name = file_read
-    amount_lines = count_lines(file_read)
-    with open(file_read, 'r', encoding='UTF-8') as f:
-        text = f.read()
-    # переменная с текстом из итогового файла для проверки
-    with open(file_write, 'r', encoding='UTF-8') as f:
-        text_file_write = f.read()
-    # записываем в итоговый файл все переменные поочереди (в конец)
-    with open(file_write, 'a', encoding='UTF-8') as f:
-        if file_name not in text_file_write:
-            f.write(f'{file_name} \n{amount_lines} \n{text} \n')
-            print(f'Файл {file_read} записан в файл {file_write}')
-        else:
-            print(f'Файл {file_read} уже был записан в файл {file_write}')
+    # создаем словарь с данными для записи в новый файл
+    dict_files = {}
+    for file in list_of_files:
+        with open(file, 'r', encoding='UTF-8') as f:
+            quantity_lines = len(f.readlines())
+        with open(file, 'r', encoding='UTF-8') as f:
+            text = f.read()
+        list_text_lines = []
+        list_text_lines.append(quantity_lines)
+        list_text_lines.append(text)
+        dict_files[file] = list_text_lines
+
+    # сортируем словарь файлов
+    sorted_dict_files = {}
+    sorted_dict_keys = sorted(dict_files, key=dict_files.get)
+    for key in sorted_dict_keys:
+        sorted_dict_files[key] = dict_files[key]
+
+    # создаем новый файл для записи данных
+    new_file = open("new_file.txt", "w+")
+
+    # добавляем данные в новый файл
+    for file in sorted_dict_files.items():
+        name_file = file[0]
+        number_of_lines = file[1][0]
+        text_to_write = file[1][1]
+        with open('new_file.txt', 'a', encoding='UTF-8') as f:
+            f.write(f'{name_file} \n{number_of_lines} \n{text_to_write} \n')
+
+    print(f'Данные из файлов из папки {directory_name} записаны в файл new_file.txt')
 
 
-write_file('final_file.txt', '2.txt')
-write_file('final_file.txt', '1.txt')
-write_file('final_file.txt', '3.txt')
+write_file('files to write')
