@@ -1,4 +1,5 @@
 # Default ignored files
 *.xml
+*.iml
 /shelf/
 /workspace.xml
